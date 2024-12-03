@@ -3,36 +3,53 @@
 @using System.Globalization
 
 <div class="container mt-4">
-    <h3 class="text-center mb-4">Simulación</h3>
 
-    <!-- Controles superiores -->
-    <div class="row mb-4">
-        <div class="col-md-2">
-            <label for="tasaInteres" class="form-label">Tasa de Interés (%)</label>
-            <input type="number" class="form-control" id="tasaInteres" @bind="TasaInteres" />
+    <div class="container mt-4">
+        <!-- Controles superiores -->
+        <div class="card p-3 mb-4 shadow-sm">
+            <h4 class="mb-3 text-primary">Calcular Financiamiento</h4>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="tasaInteres" class="form-label">
+                        <i class="bi bi-percent"></i> Tasa de Interés (%)
+                    </label>
+                    <input type="number" class="form-control" id="tasaInteres" @bind="TasaInteres" placeholder="Ej. 5.5" />
+                </div>
+                <div class="col-md-4">
+                    <label for="numMeses" class="form-label">
+                        <i class="bi bi-calendar"></i> Número de Meses
+                    </label>
+                    <input type="number" class="form-control" id="numMeses" @bind="NumeroMeses" placeholder="Ej. 24" />
+                </div>
+                <div class="col-md-4">
+                    <label for="prestamo" class="form-label">
+                        <i class="bi bi-cash-stack"></i> Monto del Préstamo
+                    </label>
+                    <input type="number" class="form-control" id="prestamo" @bind="MontoPrestamo" placeholder="Ej. 50000" />
+                </div>
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="numMeses" class="form-label">Número de Meses</label>
-            <input type="number" class="form-control" id="numMeses" @bind="NumeroMeses" />
-        </div>
-        <div class="col-md-2">
-            <label for="prestamo" class="form-label">Monto del Préstamo</label>
-            <input type="number" class="form-control" id="prestamo" @bind="MontoPrestamo" />
+
+        <!-- Resultados financieros -->
+        <div class="card p-3 shadow-sm">
+            <h4 class="mb-3 text-success">Resultados Financieros</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="alert alert-info text-center">
+                        <h5>Total a Pagar</h5>
+                        <p class="display-6 text-primary">@TotalPagar.ToString("C", CultureInfo.CurrentCulture)</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-success text-center">
+                        <h5>Pago Mensual</h5>
+                        <p class="display-6 text-success">@PagoMensual.ToString("C", CultureInfo.CurrentCulture)</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Resultados financieros -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <h5>Total a Pagar: @TotalPagar.ToString("C", CultureInfo.CurrentCulture)</h5>
-        </div>
-        <div class="col-md-4">
-            <h5>Pago Mensual: @PagoMensual.ToString("C", CultureInfo.CurrentCulture)</h5>
-        </div>
-        <div class="col-md-4 text-end">
-            <h5>Ganancias: @Ganancias.ToString("C", CultureInfo.CurrentCulture)</h5>
-        </div>
-    </div>
 
     <!-- Gastos de Compras y Compras -->
     <div class="row">
@@ -89,9 +106,17 @@
                 {
                     var totalCompra = compra.Valor * compra.Cantidad;
                     var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
+                    var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
+                    var costoIndividual = compra.Cantidad > 0 ? gastoVerdadero / compra.Cantidad : 0;
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         @compra.Nombre: $@compra.Valor.ToString("F2") x @compra.Cantidad = $@totalCompra.ToString("F2") (@porcentajeGasto.ToString("F2")%)
                         <button class="btn btn-danger btn-sm" @onclick="() => EliminarCompra(compra)">Eliminar</button>
+                    </li>
+                    <li class="list-group-item">
+                        Gasto Verdadero: $@gastoVerdadero.ToString("F2")
+                    </li>
+                    <li class="list-group-item">
+                        Costo Individual: $@costoIndividual.ToString("F2")
                     </li>
                 }
             </ul>
@@ -161,6 +186,10 @@
                 <h5>Total de Activos: @TotalActivos.ToString("C", CultureInfo.CurrentCulture)</h5>
                 <h5>Depreciación: @(TotalActivos / 60).ToString("F2")</h5>
             </div>
+        </div>
+
+        <div class="col-md-4 text-end">
+            <h5>Ganancias: @Ganancias.ToString("C", CultureInfo.CurrentCulture)</h5>
         </div>
     </div>
 </div>
