@@ -1,448 +1,510 @@
 ﻿@page "/simulacion"
+@using Radzen.Blazor
 
 <div class="container mt-4">
 
-    <!-- Dashboard -->
-    <div class="card p-3 mb-4 shadow-sm">
-        <h4 class="mb-3 text-primary">Dashboard de Rentabilidad</h4>
-        <div class="row g-3">
-            <div class="col-md-4">
-                <div class="alert alert-info text-center">
-                    <h5>Beneficio de Compras</h5>
-                    <p class="display-6 text-primary">@BeneficioCompra.ToString("C")</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-warning text-center">
-                    <h5>Costo Total</h5>
-                    <p class="display-6 text-warning">@CostoTotal.ToString("C")</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-success text-center">
-                    <h5>Ganancias</h5>
-                    <p class="display-6 text-success">@Ganancias.ToString("C")</p>
-                </div>
-            </div>
-        </div>
-    </div>
+	<!-- Dashboard -->
+	<div class="card p-3 mb-4 shadow-sm">
+		<h4 class="mb-3 text-primary">Dashboard de Rentabilidad</h4>
+		<div class="row g-3">
+			<div class="col-md-4">
+				<div class="alert alert-info text-center">
+					<h5>Beneficio de Compras</h5>
+					<p class="display-6 text-primary">@BeneficioCompra.ToString("C")</p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="alert alert-warning text-center">
+					<h5>Costo Mensual</h5>
+					<p class="display-6 text-warning">@CostoTotal.ToString("C")</p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="alert alert-success text-center">
+					<h5>Ganancias Ventas Mensual</h5>
+					<p class="display-6 text-success">@Ganancias.ToString("C")</p>
+				</div>
+			</div>
+		</div>
+	</div>
 
-@*     <!-- Informe de Rentabilidad -->
-    <div class="card p-3 mb-4 shadow-sm">
-        <h4 class="mb-3 text-primary">Generar Informe de Rentabilidad</h4>
-        <div class="row g-3">
-            <div class="col-md-4">
-                <label for="mesesInforme" class="form-label">Número de Meses para el Informe</label>
-                <input type="number" class="form-control" id="mesesInforme" @bind="MesesInforme" min="1" />
-            </div>
-        </div>
-        <div class="mt-3">
-            <button class="btn btn-primary" @onclick="GenerarInforme">Generar Informe</button>
-        </div>
-        <div class="mt-4">
-            <h5>Informe de Rentabilidad</h5>
-            <ul class="list-group">
-                @foreach (var informe in InformeRentabilidad)
-                {
-                    <li class="list-group-item">
-                        <strong>Mes @informe.Mes:</strong> Ganancias: @informe.Ganancias.ToString("C"), Costos: @informe.Costos.ToString("C")
-                    </li>
-                }
-            </ul>
-        </div>
-    </div> *@
-
-    <!-- Gastos de Compras y Compras -->
-    <div class="row mt-4">
-        <div class="col-md-3">
-            <label for="margenBeneficio" class="form-label">Margen de Beneficio (%)</label>
-            <input type="number" class="form-control" id="margenBeneficio" @bind="MargenBeneficio" min="0" max="100" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header bg-warning text-white">Gastos de Compras</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="conceptoGastoCompra" class="form-label">Concepto</label>
-                        <input type="text" class="form-control" id="conceptoGastoCompra" @bind="ConceptoGastoCompra" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="precioGastoCompra" class="form-label">Precio</label>
-                        <input type="number" class="form-control" id="precioGastoCompra" @bind="PrecioGastoCompra" />
-                    </div>
-                    <button class="btn btn-warning w-100" @onclick="AgregarGastoCompra">Agregar Gasto de Compra</button>
-                </div>
-            </div>
-            <ul class="list-group">
-                @foreach (var gastoCompra in GastosCompras)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @gastoCompra.Concepto: $@gastoCompra.Precio.ToString("F2")
-                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarGastoCompra(gastoCompra)">Eliminar</button>
-                    </li>
-                }
-            </ul>
-            <div class="mt-3">
-                <h5>Total de Gastos de Compras: @TotalGastosCompras.ToString("C")</h5>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">Compras</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="nombreCompra" class="form-label">Nombre de la Compra</label>
-                        <input type="text" class="form-control" id="nombreCompra" @bind="NombreCompra" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="valorCompra" class="form-label">Monto</label>
-                        <input type="number" class="form-control" id="valorCompra" @bind="ValorCompra" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="cantidadCompra" class="form-label">Cantidad</label>
-                        <input type="number" class="form-control" id="cantidadCompra" @bind="CantidadCompra" />
-                    </div>
-                    <button class="btn btn-success w-100" @onclick="AgregarCompra">Agregar Compra</button>
-                </div>
-            </div>
-            @foreach (var compra in Compras)
-            {
-                var totalCompra = compra.Valor * compra.Cantidad;
-                var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
-                var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
-                var costoIndividual = compra.Cantidad > 0 ? gastoVerdadero / compra.Cantidad : 0;
-                var precioVenta = costoIndividual * (1 + MargenBeneficio / 100);
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <strong>@compra.Nombre</strong>: $@compra.Valor.ToString("F2") x @compra.Cantidad = $@totalCompra.ToString("F2") (@porcentajeGasto.ToString("F2")%)
-                    <button class="btn btn-danger btn-sm" @onclick="() => EliminarCompra(compra)">Eliminar</button>
-                </li>
-                <li class="list-group-item">
-                    <strong>Gasto Verdadero:</strong> $@gastoVerdadero.ToString("F2")
-                </li>
-                <li class="list-group-item">
-                    <strong>Costo Individual:</strong> $@costoIndividual.ToString("F2")
-                </li>
-                <li class="list-group-item">
-                    <strong>Precio de Venta:</strong> $@precioVenta.ToString("F2")
-                </li>
-            }
-
-            <div class="mt-3">
-                <h5>Total Compras: @TotalCompras.ToString("C")</h5>
-                <h5>Total Ingresos: @TotalIngresos.ToString("C")</h5>
-                <h5>Beneficio de Compra: @BeneficioCompra.ToString("F2")</h5>
-            </div>
+@* 	<!-- Gráfico de Pastel -->
+	<RadzenChart>
+		<RadzenPieSeries Data="@GastosData" CategoryProperty="Category" ValueProperty="Value" />
+	</RadzenChart> *@
 
 
-        </div>
-    </div>
 
-    <!-- Gastos Administración -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header bg-secondary text-white">Gastos Administración</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="nombreGasto" class="form-label">Nombre del Gasto</label>
-                        <input type="text" class="form-control" id="nombreGasto" @bind="NombreGasto" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="valorGasto" class="form-label">Valor</label>
-                        <input type="number" class="form-control" id="valorGasto" @bind="ValorGasto" />
-                    </div>
-                    <button class="btn btn-secondary w-100 mb-2" @onclick="() => AgregarGasto(true)">Agregar Gasto (Préstamo)</button>
-                    <button class="btn btn-secondary w-100" @onclick="() => AgregarGasto(false)">Agregar Gasto (Ganancias)</button>
-                </div>
-            </div>
-            <ul class="list-group">
-                @foreach (var gasto in Gastos)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @gasto.Nombre: $@gasto.Valor.ToString("F2")
-                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarGasto(gasto)">Eliminar</button>
-                    </li>
-                }
-            </ul>
-            <div class="mt-3">
-                <h5>Total Gastos: @TotalGastos.ToString("C")</h5>
-            </div>
-        </div>
+	@*     <!-- Informe de Rentabilidad -->
+	<div class="card p-3 mb-4 shadow-sm">
+	<h4 class="mb-3 text-primary">Generar Informe de Rentabilidad</h4>
+	<div class="row g-3">
+	<div class="col-md-4">
+	<label for="mesesInforme" class="form-label">Número de Meses para el Informe</label>
+	<input type="number" class="form-control" id="mesesInforme" @bind="MesesInforme" min="1" />
+	</div>
+	</div>
+	<div class="mt-3">
+	<button class="btn btn-primary" @onclick="GenerarInforme">Generar Informe</button>
+	</div>
+	<div class="mt-4">
+	<h5>Informe de Rentabilidad</h5>
+	<ul class="list-group">
+	@foreach (var informe in InformeRentabilidad)
+	{
+	<li class="list-group-item">
+	<strong>Mes @informe.Mes:</strong> Ganancias: @informe.Ganancias.ToString("C"), Costos: @informe.Costos.ToString("C")
+	</li>
+	}
+	</ul>
+	</div>
+	</div> *@
 
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header bg-primary text-white">Activos</div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="nombreActivo" class="form-label">Nombre del Activo</label>
-                        <input type="text" class="form-control" id="nombreActivo" @bind="NombreActivo" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="valorActivo" class="form-label">Valor</label>
-                        <input type="number" class="form-control" id="valorActivo" @bind="ValorActivo" />
-                    </div>
-                    <button class="btn btn-primary w-100 mb-2" @onclick="() => AgregarActivo(true)">Agregar Activo (Préstamo)</button>
-                    <button class="btn btn-primary w-100" @onclick="() => AgregarActivo(false)">Agregar Activo (Ganancias)</button>
-                </div>
-            </div>
-            <ul class="list-group">
-                @foreach (var activo in Activos)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @activo.Nombre: $@activo.Valor.ToString("F2")
-                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarActivo(activo)">Eliminar</button>
-                    </li>
-                }
-            </ul>
-            <div class="mt-3">
-                <h5>Total Activos: @TotalActivos.ToString("C")</h5>
-                <h5>Depreciación de Activos: @DepreciacionActivos.ToString("C")</h5>
-            </div>
-        </div>
-    </div>
+	<!-- Gastos de Compras y Compras -->
+	<div class="row mt-4">
+		<div class="col-md-3">
+			<label for="margenBeneficio" class="form-label">Margen de Beneficio (%)</label>
+			<input type="number" class="form-control" id="margenBeneficio" @bind="MargenBeneficio" min="0" max="100" />
+		</div>
+	</div>
 
-    <div class="container mt-4">
-        <!-- Controles superiores -->
-        <div class="card p-3 mb-4 shadow-sm">
-            <h4 class="mb-3 text-primary">Calcular Financiamiento</h4>
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="tasaInteres" class="form-label">
-                        <i class="bi bi-percent"></i> Tasa de Interés (%)
-                    </label>
-                    <input type="number" class="form-control" id="tasaInteres" @bind="TasaInteres" placeholder="Ej. 5.5" />
-                </div>
-                <div class="col-md-4">
-                    <label for="numMeses" class="form-label">
-                        <i class="bi bi-calendar"></i> Número de Meses
-                    </label>
-                    <input type="number" class="form-control" id="numMeses" @bind="NumeroMeses" placeholder="Ej. 24" />
-                </div>
-                <div class="col-md-4">
-                    <label for="prestamo" class="form-label">
-                        <i class="bi bi-cash-stack"></i> Monto del Préstamo
-                    </label>
-                    <input type="number" class="form-control" id="prestamo" @bind="MontoPrestamo" placeholder="Ej. 50000" />
-                </div>
-            </div>
-        </div>
+	<div class="row mt-3">
+		<div class="col-md-6">
+			<div class="card mb-3">
+				<div class="card-header bg-warning text-white">Gastos de Compras</div>
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="conceptoGastoCompra" class="form-label">Concepto</label>
+						<input type="text" class="form-control" id="conceptoGastoCompra" @bind="ConceptoGastoCompra" />
+					</div>
+					<div class="mb-3">
+						<label for="precioGastoCompra" class="form-label">Precio</label>
+						<input type="number" class="form-control" id="precioGastoCompra" @bind="PrecioGastoCompra" />
+					</div>
+					<button class="btn btn-warning w-100" @onclick="AgregarGastoCompra">Agregar Gasto de Compra</button>
+				</div>
+			</div>
+			<ul class="list-group">
+				@foreach (var gastoCompra in GastosCompras)
+				{
+					<li class="list-group-item d-flex justify-content-between align-items-center">
+						@gastoCompra.Concepto: $@gastoCompra.Precio.ToString("F2")
+						<button class="btn btn-danger btn-sm" @onclick="() => EliminarGastoCompra(gastoCompra)">Eliminar</button>
+					</li>
+				}
+			</ul>
+			<div class="mt-3">
+				<h5>Total de Gastos de Compras: @TotalGastosCompras.ToString("C")</h5>
+			</div>
+		</div>
 
-        <!-- Resultados financieros -->
-        <div class="card p-3 shadow-sm">
-            <h4 class="mb-3 text-success">Resultados Financieros</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="alert alert-info text-center">
-                        <h5>Total a Pagar</h5>
-                        <p class="display-6 text-primary">@TotalPagar.ToString("C")</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="alert alert-success text-center">
-                        <h5>Pago Mensual</h5>
-                        <p class="display-6 text-success">@PagoMensual.ToString("C")</p>
-                    </div>
-                </div>
-            </div>
+		<div class="col-md-6">
+			<div class="card mb-3">
+				<div class="card-header bg-success text-white">Compras</div>
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="nombreCompra" class="form-label">Nombre de la Compra</label>
+						<input type="text" class="form-control" id="nombreCompra" @bind="NombreCompra" />
+					</div>
+					<div class="mb-3">
+						<label for="valorCompra" class="form-label">Monto</label>
+						<input type="number" class="form-control" id="valorCompra" @bind="ValorCompra" />
+					</div>
+					<div class="mb-3">
+						<label for="cantidadCompra" class="form-label">Cantidad</label>
+						<input type="number" class="form-control" id="cantidadCompra" @bind="CantidadCompra" />
+					</div>
+					<button class="btn btn-success w-100" @onclick="AgregarCompra">Agregar Compra</button>
+				</div>
+			</div>
+			@foreach (var compra in Compras)
+			{
+				var totalCompra = compra.Valor * compra.Cantidad;
+				var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
+				var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
+				var costoIndividual = compra.Cantidad > 0 ? gastoVerdadero / compra.Cantidad : 0;
+				var precioVenta = costoIndividual * (1 + MargenBeneficio / 100);
+				<li class="list-group-item d-flex justify-content-between align-items-center">
+					<strong>@compra.Nombre</strong>: $@compra.Valor.ToString("F2") x @compra.Cantidad = $@totalCompra.ToString("F2") (@porcentajeGasto.ToString("F2")%)
+					<button class="btn btn-danger btn-sm" @onclick="() => EliminarCompra(compra)">Eliminar</button>
+				</li>
+				<li class="list-group-item">
+					<strong>Gasto Verdadero:</strong> $@gastoVerdadero.ToString("F2")
+				</li>
+				<li class="list-group-item">
+					<strong>Costo Individual:</strong> $@costoIndividual.ToString("F2")
+				</li>
+				<li class="list-group-item">
+					<strong>Precio de Venta:</strong> $@precioVenta.ToString("F2")
+				</li>
+			}
 
-            <div class="row g-3 justify-content-center">
-                <div class="col-md-4">
-                    <div class="alert alert-info text-center">
-                        <h5>Préstamo Inicial</h5>
-                        <p class="display-6 text-primary">@MontoPrestamo.ToString("C")</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="alert alert-success text-center">
-                        <h5>Préstamo Restante</h5>
-                        <p class="display-6 text-success">@PrestamoRestante.ToString("C")</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+			<div class="mt-3">
+				<h5>Total Compras: @TotalCompras.ToString("C")</h5>
+				<h5>Total Ingresos: @TotalIngresos.ToString("C")</h5>
+				<h5>Beneficio de Compra: @BeneficioCompra.ToString("F2")</h5>
+			</div>
 
-    </div>
+
+		</div>
+	</div>
+
+	<!-- Gastos Administración -->
+	<div class="row">
+		<div class="col-md-6">
+			<div class="card mb-3">
+				<div class="card-header bg-secondary text-white">Gastos Administración</div>
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="nombreGasto" class="form-label">Nombre del Gasto</label>
+						<input type="text" class="form-control" id="nombreGasto" @bind="NombreGasto" />
+					</div>
+					<div class="mb-3">
+						<label for="valorGasto" class="form-label">Valor</label>
+						<input type="number" class="form-control" id="valorGasto" @bind="ValorGasto" />
+					</div>
+					<button class="btn btn-secondary w-100 mb-2" @onclick="() => AgregarGasto(true)">Agregar Gasto (Préstamo)</button>
+					<button class="btn btn-secondary w-100" @onclick="() => AgregarGasto(false)">Agregar Gasto (Ganancias)</button>
+				</div>
+			</div>
+			<ul class="list-group">
+				@foreach (var gasto in Gastos)
+				{
+					<li class="list-group-item d-flex justify-content-between align-items-center">
+						@gasto.Nombre: $@gasto.Valor.ToString("F2")
+						<button class="btn btn-danger btn-sm" @onclick="() => EliminarGasto(gasto)">Eliminar</button>
+					</li>
+				}
+			</ul>
+			<div class="mt-3">
+				<h5>Total Gastos: @TotalGastos.ToString("C")</h5>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<div class="card mb-3">
+				<div class="card-header bg-primary text-white">Activos</div>
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="nombreActivo" class="form-label">Nombre del Activo</label>
+						<input type="text" class="form-control" id="nombreActivo" @bind="NombreActivo" />
+					</div>
+					<div class="mb-3">
+						<label for="valorActivo" class="form-label">Valor</label>
+						<input type="number" class="form-control" id="valorActivo" @bind="ValorActivo" />
+					</div>
+					<button class="btn btn-primary w-100 mb-2" @onclick="() => AgregarActivo(true)">Agregar Activo (Préstamo)</button>
+					<button class="btn btn-primary w-100" @onclick="() => AgregarActivo(false)">Agregar Activo (Ganancias)</button>
+				</div>
+			</div>
+			<ul class="list-group">
+				@foreach (var activo in Activos)
+				{
+					<li class="list-group-item d-flex justify-content-between align-items-center">
+						@activo.Nombre: $@activo.Valor.ToString("F2")
+						<button class="btn btn-danger btn-sm" @onclick="() => EliminarActivo(activo)">Eliminar</button>
+					</li>
+				}
+			</ul>
+			<div class="mt-3">
+				<h5>Total Activos: @TotalActivos.ToString("C")</h5>
+				<h5>Depreciación de Activos: @DepreciacionActivos.ToString("C")</h5>
+			</div>
+		</div>
+	</div>
+
+	<div class="container mt-4">
+		<!-- Controles superiores -->
+		<div class="card p-3 mb-4 shadow-sm">
+			<h4 class="mb-3 text-primary">Calcular Financiamiento</h4>
+			<div class="row g-3">
+				<div class="col-md-4">
+					<label for="tasaInteres" class="form-label">
+						<i class="bi bi-percent"></i> Tasa de Interés (%)
+					</label>
+					<input type="number" class="form-control" id="tasaInteres" @bind="TasaInteres" placeholder="Ej. 5.5" />
+				</div>
+				<div class="col-md-4">
+					<label for="numMeses" class="form-label">
+						<i class="bi bi-calendar"></i> Número de Meses
+					</label>
+					<input type="number" class="form-control" id="numMeses" @bind="NumeroMeses" placeholder="Ej. 24" />
+				</div>
+				<div class="col-md-4">
+					<label for="prestamo" class="form-label">
+						<i class="bi bi-cash-stack"></i> Monto del Préstamo
+					</label>
+					<input type="number" class="form-control" id="prestamo" @bind="MontoPrestamo" placeholder="Ej. 50000" />
+				</div>
+			</div>
+		</div>
+
+		<!-- Resultados financieros -->
+		<div class="card p-3 shadow-sm">
+			<h4 class="mb-3 text-success">Resultados Financieros</h4>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="alert alert-info text-center">
+						<h5>Total a Pagar</h5>
+						<p class="display-6 text-primary">@TotalPagar.ToString("C")</p>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="alert alert-success text-center">
+						<h5>Pago Mensual</h5>
+						<p class="display-6 text-success">@PagoMensual.ToString("C")</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row g-3 justify-content-center">
+				<div class="col-md-4">
+					<div class="alert alert-info text-center">
+						<h5>Préstamo Inicial</h5>
+						<p class="display-6 text-primary">@MontoPrestamo.ToString("C")</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="alert alert-success text-center">
+						<h5>Préstamo Restante</h5>
+						<p class="display-6 text-success">@PrestamoRestante.ToString("C")</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
 
 </div>
 
 @code {
-    // Variables para los cálculos
-    private double TasaInteres { get; set; } = 5;
-    private int NumeroMeses { get; set; } = 24;
-    private double MontoPrestamo { get; set; } = 100000;
-    private double _margenBeneficio = 10; // Margen de beneficio en porcentaje
-    private double MargenBeneficio
-    {
-        get => _margenBeneficio;
-        set
-        {
-            _margenBeneficio = value;
-            RecalcularTotalIngresos();
-        }
-    }
-    private double TotalPagar => MontoPrestamo * Math.Pow(1 + (TasaInteres / 100), NumeroMeses / 12.0);
-    private double PagoMensual => TotalPagar / NumeroMeses;
-    private double Ganancias => BeneficioCompra - CostoTotal;
+	// Variables para los cálculos
+	private double TasaInteres { get; set; } = 5;
+	private int NumeroMeses { get; set; } = 24;
+	private double MontoPrestamo { get; set; } = 100000;
+	private double _margenBeneficio = 10; // Margen de beneficio en porcentaje
+	private double MargenBeneficio
+	{
+		get => _margenBeneficio;
+		set
+		{
+			_margenBeneficio = value;
+			RecalcularTotalIngresos();
+		}
+	}
+	private double TotalPagar => MontoPrestamo * Math.Pow(1 + (TasaInteres / 100), NumeroMeses / 12.0);
+	private double PagoMensual => TotalPagar / NumeroMeses;
+	private double Ganancias => BeneficioCompra - CostoTotal;
 
-    // Listas de datos
-    private List<(string Nombre, double Valor, int Cantidad)> Compras = new();
-    private List<(string Nombre, double Valor)> Gastos = new();
-    private List<(string Concepto, double Precio)> GastosCompras = new();
-    private List<(string Nombre, double Valor)> Activos = new();
+	// Listas de datos
 
-    // Totales
-    private double TotalGastos => Gastos.Sum(g => g.Valor);
-    private double TotalCompras => Compras.Sum(c => c.Valor * c.Cantidad);
-    private double TotalGastosCompras => GastosCompras.Sum(gc => gc.Precio);
-    private double TotalActivos => Activos.Sum(a => a.Valor);
-    private double TotalIngresos { get; set; }
-    private double BeneficioCompra => TotalIngresos - (TotalCompras + TotalGastosCompras);
-    private double DepreciacionActivos => TotalActivos / 60;
-    private double PrestamoRestante => MontoPrestamo - (TotalGastos + TotalActivos);
-    private double CostoTotal => TotalGastos + TotalGastosCompras;
-    private int MesesSimulacion { get; set; } = 1;
-    private int MesesInforme { get; set; } = 1;
-    private List<(int Mes, double Ganancias, double Costos)> ResultadosSimulacion = new();
-    private List<(int Mes, double Ganancias, double Costos)> InformeRentabilidad = new();
+	private List<(string Nombre, double Valor, int Cantidad)> Compras = new()
+	{
+	
+	};
 
-    // Variables temporales para agregar elementos
-    private string NombreGasto { get; set; }
-    private double ValorGasto { get; set; }
-    private string NombreCompra { get; set; }
-    private double ValorCompra { get; set; }
-    private int CantidadCompra { get; set; }
-    private string ConceptoGastoCompra { get; set; }
-    private double PrecioGastoCompra { get; set; }
-    private string NombreActivo { get; set; }
-    private double ValorActivo { get; set; }
+	private List<(string Nombre, double Valor)> Gastos = new()
+	{
 
-    // Métodos para agregar elementos
-    private void AgregarGasto(bool usarPrestamo)
-    {
-        if (!string.IsNullOrWhiteSpace(NombreGasto) && ValorGasto > 0)
-        {
-            Gastos.Add((NombreGasto, ValorGasto));
-            if (usarPrestamo)
-            {
-                MontoPrestamo -= ValorGasto;
-            }
-            else
-            {
-            RecalcularTotalIngresos();
-            }
-            NombreGasto = string.Empty;
-            ValorGasto = 0;
-            StateHasChanged();
-        }
-    }
+	};
 
-    private void AgregarCompra()
-    {
-        if (!string.IsNullOrWhiteSpace(NombreCompra) && ValorCompra > 0 && CantidadCompra > 0)
-        {
-            Compras.Add((NombreCompra, ValorCompra, CantidadCompra));
-            NombreCompra = string.Empty;
-            ValorCompra = 0;
-            CantidadCompra = 0;
-            RecalcularTotalIngresos();
-            StateHasChanged();
-        }
-    }
+	private List<(string Concepto, double Precio)> GastosCompras = new()
+	{
 
-    private void AgregarGastoCompra()
-    {
-        if (!string.IsNullOrWhiteSpace(ConceptoGastoCompra) && PrecioGastoCompra > 0)
-        {
-            GastosCompras.Add((ConceptoGastoCompra, PrecioGastoCompra));
-            ConceptoGastoCompra = string.Empty;
-            PrecioGastoCompra = 0;
-            RecalcularTotalIngresos();
-            StateHasChanged();
-        }
-    }
+	};
 
-    private void AgregarActivo(bool usarPrestamo)
-    {
-        if (!string.IsNullOrWhiteSpace(NombreActivo) && ValorActivo > 0)
-        {
-            Activos.Add((NombreActivo, ValorActivo));
-            if (usarPrestamo)
-            {
-                MontoPrestamo -= ValorActivo;
-            }
-            else
-            {
-                RecalcularTotalIngresos();
-            }
-            NombreActivo = string.Empty;
-            ValorActivo = 0;
-            StateHasChanged();
-        }
-    }
+	private List<(string Nombre, double Valor)> Activos = new()
+	{
 
-    // Métodos para eliminar elementos
-    private void EliminarGasto((string Nombre, double Valor) gasto)
-    {
-        Gastos.Remove(gasto);
-        StateHasChanged();
-    }
+	};
 
-    private void EliminarCompra((string Nombre, double Valor, int Cantidad) compra)
-    {
-        Compras.Remove(compra);
-        RecalcularTotalIngresos();
-        StateHasChanged();
-    }
+	// Totales
+	private double TotalGastos => Gastos.Sum(g => g.Valor);
+	private double TotalCompras => Compras.Sum(c => c.Valor * c.Cantidad);
+	private double TotalGastosCompras => GastosCompras.Sum(gc => gc.Precio);
+	private double TotalActivos => Activos.Sum(a => a.Valor);
+	private double TotalIngresos { get; set; }
+	private double BeneficioCompra => TotalIngresos - (TotalCompras + TotalGastosCompras);
+	private double DepreciacionActivos => TotalActivos / 60;
+	private double PrestamoRestante => MontoPrestamo - (TotalGastos + TotalActivos);
+	private double CostoTotal => TotalGastos + TotalGastosCompras;
+	private int MesesSimulacion { get; set; } = 1;
+	private int MesesInforme { get; set; } = 1;
+	private List<(int Mes, double Ganancias, double Costos)> ResultadosSimulacion = new();
+	private List<(int Mes, double Ganancias, double Costos)> InformeRentabilidad = new();
 
-    private void EliminarGastoCompra((string Concepto, double Precio) gastoCompra)
-    {
-        GastosCompras.Remove(gastoCompra);
-        RecalcularTotalIngresos();
-        StateHasChanged();
-    }
+	// Variables temporales para agregar elementos
+	private string NombreGasto { get; set; }
+	private double ValorGasto { get; set; }
+	private string NombreCompra { get; set; }
+	private double ValorCompra { get; set; }
+	private int CantidadCompra { get; set; }
+	private string ConceptoGastoCompra { get; set; }
+	private double PrecioGastoCompra { get; set; }
+	private string NombreActivo { get; set; }
+	private double ValorActivo { get; set; }
 
-    private void EliminarActivo((string Nombre, double Valor) activo)
-    {
-        Activos.Remove(activo);
-        StateHasChanged();
-    }
+	protected override void OnInitialized()
+	{
+		ActualizarGastosData();
+	}
 
-    // Método para recalcular el total de ingresos
-    private void RecalcularTotalIngresos()
-    {
-        TotalIngresos = Compras.Sum(c =>
-        {
-            var totalCompra = c.Valor * c.Cantidad;
-            var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
-            var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
-            var costoIndividual = c.Cantidad > 0 ? gastoVerdadero / c.Cantidad : 0;
-            var precioVenta = costoIndividual * (1 + MargenBeneficio / 100);
-            return precioVenta * c.Cantidad;
-        });
-        StateHasChanged();
-    }
+	// Métodos para agregar elementos
+	private void AgregarGasto(bool usarPrestamo)
+	{
+		if (!string.IsNullOrWhiteSpace(NombreGasto) && ValorGasto > 0)
+		{
+			Gastos.Add((NombreGasto, ValorGasto));
+			if (usarPrestamo)
+			{
+				MontoPrestamo -= ValorGasto;
+			}
+			else
+			{
+				RecalcularTotalIngresos();
+			}
+			NombreGasto = string.Empty;
+			ValorGasto = 0;
+			StateHasChanged();
+			ActualizarGastosData();
 
-    // Métodos para simular ganancias y costos
-    private void SimularGananciasCostos()
-    {
-        ResultadosSimulacion.Clear();
-        for (int i = 1; i <= MesesSimulacion; i++)
-        {
-            ResultadosSimulacion.Add((i, Ganancias, CostoTotal));
-        }
-    }
+		}
+	}
 
-    // Método para generar el informe de rentabilidad
-    private void GenerarInforme()
-    {
-        InformeRentabilidad.Clear();
-        for (int i = 1; i <= MesesInforme; i++)
-        {
-            InformeRentabilidad.Add((i, Ganancias, CostoTotal));
-        }
-    }
+	private void AgregarCompra()
+	{
+		if (!string.IsNullOrWhiteSpace(NombreCompra) && ValorCompra > 0 && CantidadCompra > 0)
+		{
+			Compras.Add((NombreCompra, ValorCompra, CantidadCompra));
+			NombreCompra = string.Empty;
+			ValorCompra = 0;
+			CantidadCompra = 0;
+			RecalcularTotalIngresos();
+			StateHasChanged();
+			ActualizarGastosData();
+
+		}
+	}
+
+	private void AgregarGastoCompra()
+	{
+		if (!string.IsNullOrWhiteSpace(ConceptoGastoCompra) && PrecioGastoCompra > 0)
+		{
+			GastosCompras.Add((ConceptoGastoCompra, PrecioGastoCompra));
+			ConceptoGastoCompra = string.Empty;
+			PrecioGastoCompra = 0;
+			RecalcularTotalIngresos();
+			StateHasChanged();
+			ActualizarGastosData();
+
+		}
+	}
+
+	private void AgregarActivo(bool usarPrestamo)
+	{
+		if (!string.IsNullOrWhiteSpace(NombreActivo) && ValorActivo > 0)
+		{
+			Activos.Add((NombreActivo, ValorActivo));
+			if (usarPrestamo)
+			{
+				MontoPrestamo -= ValorActivo;
+			}
+			else
+			{
+				RecalcularTotalIngresos();
+			}
+			NombreActivo = string.Empty;
+			ValorActivo = 0;
+			StateHasChanged();
+			ActualizarGastosData();
+
+		}
+	}
+
+	// Métodos para eliminar elementos
+	private void EliminarGasto((string Nombre, double Valor) gasto)
+	{
+		Gastos.Remove(gasto);
+		StateHasChanged();
+	}
+
+	private void EliminarCompra((string Nombre, double Valor, int Cantidad) compra)
+	{
+		Compras.Remove(compra);
+		RecalcularTotalIngresos();
+		StateHasChanged();
+	}
+
+	private void EliminarGastoCompra((string Concepto, double Precio) gastoCompra)
+	{
+		GastosCompras.Remove(gastoCompra);
+		RecalcularTotalIngresos();
+		StateHasChanged();
+	}
+
+	private void EliminarActivo((string Nombre, double Valor) activo)
+	{
+		Activos.Remove(activo);
+		StateHasChanged();
+	}
+
+	// Método para recalcular el total de ingresos
+	private void RecalcularTotalIngresos()
+	{
+		TotalIngresos = Compras.Sum(c =>
+		{
+			var totalCompra = c.Valor * c.Cantidad;
+			var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
+			var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
+			var costoIndividual = c.Cantidad > 0 ? gastoVerdadero / c.Cantidad : 0;
+			var precioVenta = costoIndividual * (1 + MargenBeneficio / 100);
+			return precioVenta * c.Cantidad;
+		});
+		StateHasChanged();
+	}
+
+	// Métodos para simular ganancias y costos
+	private void SimularGananciasCostos()
+	{
+		ResultadosSimulacion.Clear();
+		for (int i = 1; i <= MesesSimulacion; i++)
+		{
+			ResultadosSimulacion.Add((i, Ganancias, CostoTotal));
+		}
+	}
+
+	// Método para generar el informe de rentabilidad
+	private void GenerarInforme()
+	{
+		InformeRentabilidad.Clear();
+		for (int i = 1; i <= MesesInforme; i++)
+		{
+			InformeRentabilidad.Add((i, Ganancias, CostoTotal));
+		}
+	}
+	public class GastoData
+	{
+		public string Category { get; set; } = string.Empty;
+		public double Value { get; set; }
+	}
+	private List<GastoData> GastosData = new List<GastoData>();
+
+	private void ActualizarGastosData()
+	{
+		GastosData = new List<GastoData>
+		{
+			new GastoData { Category = "Compras", Value = TotalGastosCompras },
+			new GastoData { Category = "Administración", Value = TotalGastos },
+			new GastoData { Category = "Activos", Value = TotalActivos }
+		};
+		StateHasChanged();
+	}
+
+
+
+	bool showDataLabels = false;
+
+
+
+
 }
