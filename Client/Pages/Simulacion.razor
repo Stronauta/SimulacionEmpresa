@@ -1,0 +1,101 @@
+﻿@page "/Simulacion"
+
+
+
+<div class="container mt-4">
+    <h3 class="text-center mb-4">Simulación</h3>
+
+    <!-- Controles superiores -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <label for="tasaInflacion" class="form-label">Tasa de Inflación (%)</label>
+            <input type="number" class="form-control" id="tasaInflacion" value="2">
+        </div>
+        <div class="col-md-2">
+            <label for="tasaRetorno" class="form-label">Tasa de Retorno (%)</label>
+            <input type="number" class="form-control" id="tasaRetorno" value="5">
+        </div>
+        <div class="col-md-2">
+            <label for="numAnios" class="form-label">Número de Años</label>
+            <input type="number" class="form-control" id="numAnios" value="20">
+        </div>
+    </div>
+
+    <!-- Valores iniciales -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h5>Patrimonio Inicial: $0.00</h5>
+        </div>
+        <div class="col-md-6 text-end">
+            <h5>Patrimonio Final: $0.00</h5>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Flujo de Caja</div>
+        <div class="card-body">
+            <div class="bg-light" style="height: 300px;">
+                <!-- Espacio para el gráfico -->
+                <p class="text-center pt-5">El gráfico aparecerá aquí.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secciones: Gastos, Ingresos y Activos -->
+    <div class="row">
+        <!-- Gastos -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-secondary text-white">Gastos</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="nombreGasto" class="form-label">Nombre del Gasto</label>
+                        <input type="text" class="form-control" id="nombreGasto" placeholder="Ejemplo: Alquiler">
+                    </div>
+                    <div class="mb-3">
+                        <label for="valorGasto" class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="valorGasto">
+                    </div>
+                    <button class="btn btn-primary w-100">Agregar Gasto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ingresos -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Ingresos</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="nombreIngreso" class="form-label">Nombre del Ingreso</label>
+                        <input type="text" class="form-control" id="nombreIngreso" placeholder="Ejemplo: Salario">
+                    </div>
+                    <div class="mb-3">
+                        <label for="valorIngreso" class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="valorIngreso">
+                    </div>
+                    <button class="btn btn-success w-100">Agregar Ingreso</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activos -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-info text-white">Activos</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="nombreActivo" class="form-label">Nombre del Activo</label>
+                        <input type="text" class="form-control" id="nombreActivo" placeholder="Ejemplo: Casa">
+                    </div>
+                    <div class="mb-3">
+                        <label for="valorActivo" class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="valorActivo">
+                    </div>
+                    <button class="btn btn-info w-100">Agregar Activo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
