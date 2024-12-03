@@ -1,6 +1,6 @@
 ﻿@page "/Simulacion"
 
-
+@using System.Globalization
 
 <div class="container mt-4">
     <h3 class="text-center mb-4">Simulación</h3>
@@ -8,41 +8,33 @@
     <!-- Controles superiores -->
     <div class="row mb-4">
         <div class="col-md-2">
-            <label for="tasaInflacion" class="form-label">Tasa de Inflación (%)</label>
-            <input type="number" class="form-control" id="tasaInflacion" value="2">
+            <label for="tasaInteres" class="form-label">Tasa de Interés (%)</label>
+            <input type="number" class="form-control" id="tasaInteres" @bind="TasaInteres" />
         </div>
         <div class="col-md-2">
-            <label for="tasaRetorno" class="form-label">Tasa de Retorno (%)</label>
-            <input type="number" class="form-control" id="tasaRetorno" value="5">
+            <label for="numMeses" class="form-label">Número de Meses</label>
+            <input type="number" class="form-control" id="numMeses" @bind="NumeroMeses" />
         </div>
         <div class="col-md-2">
-            <label for="numAnios" class="form-label">Número de Años</label>
-            <input type="number" class="form-control" id="numAnios" value="20">
+            <label for="prestamo" class="form-label">Monto del Préstamo</label>
+            <input type="number" class="form-control" id="prestamo" @bind="MontoPrestamo" />
         </div>
     </div>
 
-    <!-- Valores iniciales -->
+    <!-- Resultados financieros -->
     <div class="row mb-4">
-        <div class="col-md-6">
-            <h5>Patrimonio Inicial: $0.00</h5>
+        <div class="col-md-4">
+            <h5>Total a Pagar: @TotalPagar.ToString("C", CultureInfo.CurrentCulture)</h5>
         </div>
-        <div class="col-md-6 text-end">
-            <h5>Patrimonio Final: $0.00</h5>
+        <div class="col-md-4">
+            <h5>Pago Mensual: @PagoMensual.ToString("C", CultureInfo.CurrentCulture)</h5>
         </div>
-    </div>
-
-    <!-- Gráficos -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">Flujo de Caja</div>
-        <div class="card-body">
-            <div class="bg-light" style="height: 300px;">
-                <!-- Espacio para el gráfico -->
-                <p class="text-center pt-5">El gráfico aparecerá aquí.</p>
-            </div>
+        <div class="col-md-4 text-end">
+            <h5>Ganancias: @Ganancias.ToString("C", CultureInfo.CurrentCulture)</h5>
         </div>
     </div>
 
-    <!-- Secciones: Gastos, Ingresos y Activos -->
+    <!-- Gastos, Ingresos y Activos -->
     <div class="row">
         <!-- Gastos -->
         <div class="col-md-4">
@@ -51,15 +43,24 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="nombreGasto" class="form-label">Nombre del Gasto</label>
-                        <input type="text" class="form-control" id="nombreGasto" placeholder="Ejemplo: Alquiler">
+                        <input type="text" class="form-control" id="nombreGasto" @bind="NombreGasto" />
                     </div>
                     <div class="mb-3">
                         <label for="valorGasto" class="form-label">Monto</label>
-                        <input type="number" class="form-control" id="valorGasto">
+                        <input type="number" class="form-control" id="valorGasto" @bind="ValorGasto" />
                     </div>
-                    <button class="btn btn-primary w-100">Agregar Gasto</button>
+                    <button class="btn btn-primary w-100" @onclick="AgregarGasto">Agregar Gasto</button>
                 </div>
             </div>
+            <ul class="list-group">
+                @foreach (var gasto in Gastos)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @gasto.Nombre: $@gasto.Valor.ToString("F2")
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarGasto(gasto)">Eliminar</button>
+                    </li>
+                }
+            </ul>
         </div>
 
         <!-- Ingresos -->
@@ -69,14 +70,26 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="nombreIngreso" class="form-label">Nombre del Ingreso</label>
-                        <input type="text" class="form-control" id="nombreIngreso" placeholder="Ejemplo: Salario">
+                        <input type="text" class="form-control" id="nombreIngreso" @bind="NombreIngreso" />
                     </div>
                     <div class="mb-3">
                         <label for="valorIngreso" class="form-label">Monto</label>
-                        <input type="number" class="form-control" id="valorIngreso">
+                        <input type="number" class="form-control" id="valorIngreso" @bind="ValorIngreso" />
                     </div>
-                    <button class="btn btn-success w-100">Agregar Ingreso</button>
+                    <button class="btn btn-success w-100" @onclick="AgregarIngreso">Agregar Ingreso</button>
                 </div>
+            </div>
+            <ul class="list-group">
+                @foreach (var ingreso in Ingresos)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @ingreso.Nombre: $@ingreso.Valor.ToString("F2")
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarIngreso(ingreso)">Eliminar</button>
+                    </li>
+                }
+            </ul>
+            <div class="mt-3">
+                <h5>Total de Ingresos: @TotalIngresos.ToString("C", CultureInfo.CurrentCulture)</h5>
             </div>
         </div>
 
@@ -87,15 +100,104 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="nombreActivo" class="form-label">Nombre del Activo</label>
-                        <input type="text" class="form-control" id="nombreActivo" placeholder="Ejemplo: Casa">
+                        <input type="text" class="form-control" id="nombreActivo" @bind="NombreActivo" />
                     </div>
                     <div class="mb-3">
                         <label for="valorActivo" class="form-label">Monto</label>
-                        <input type="number" class="form-control" id="valorActivo">
+                        <input type="number" class="form-control" id="valorActivo" @bind="ValorActivo" />
                     </div>
-                    <button class="btn btn-info w-100">Agregar Activo</button>
+                    <button class="btn btn-info w-100" @onclick="AgregarActivo">Agregar Activo</button>
                 </div>
             </div>
+            <ul class="list-group">
+                @foreach (var activo in Activos)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @activo.Nombre: $@activo.Valor.ToString("F2")
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarActivo(activo)">Eliminar</button>
+                    </li>
+                }
+            </ul>
+            <div class="mt-3">
+                <h5>Total de Activos: @TotalActivos.ToString("C", CultureInfo.CurrentCulture)</h5>
+                <h5>Depreciación: @(TotalActivos / 60)</h5>
+            </div>
+
         </div>
     </div>
 </div>
+
+@code {
+    // Variables para los cálculos
+    private double TasaInteres { get; set; } = 5;
+    private int NumeroMeses { get; set; } = 24;
+    private double MontoPrestamo { get; set; } = 100000;
+    private double TotalPagar => MontoPrestamo * Math.Pow(1 + (TasaInteres / 100), NumeroMeses / 12.0);
+    private double PagoMensual => TotalPagar / NumeroMeses;
+    private double Ganancias => TotalIngresos - TotalGastos;
+
+    // Listas de datos
+    private List<(string Nombre, double Valor)> Gastos = new();
+    private List<(string Nombre, double Valor)> Ingresos = new();
+    private List<(string Nombre, double Valor)> Activos = new();
+
+    // Totales
+    private double TotalGastos => Gastos.Sum(g => g.Valor);
+    private double TotalIngresos => Ingresos.Sum(i => i.Valor);
+    private double TotalActivos => Activos.Sum(a => a.Valor);
+
+    // Variables temporales para agregar elementos
+    private string NombreGasto { get; set; }
+    private double ValorGasto { get; set; }
+    private string NombreIngreso { get; set; }
+    private double ValorIngreso { get; set; }
+    private string NombreActivo { get; set; }
+    private double ValorActivo { get; set; }
+
+    // Métodos para agregar elementos
+    private void AgregarGasto()
+    {
+        if (!string.IsNullOrWhiteSpace(NombreGasto) && ValorGasto > 0)
+        {
+            Gastos.Add((NombreGasto, ValorGasto));
+            NombreGasto = string.Empty;
+            ValorGasto = 0;
+        }
+    }
+
+    private void AgregarIngreso()
+    {
+        if (!string.IsNullOrWhiteSpace(NombreIngreso) && ValorIngreso > 0)
+        {
+            Ingresos.Add((NombreIngreso, ValorIngreso));
+            NombreIngreso = string.Empty;
+            ValorIngreso = 0;
+        }
+    }
+
+    private void AgregarActivo()
+    {
+        if (!string.IsNullOrWhiteSpace(NombreActivo) && ValorActivo > 0)
+        {
+            Activos.Add((NombreActivo, ValorActivo));
+            NombreActivo = string.Empty;
+            ValorActivo = 0;
+        }
+    }
+
+    // Métodos para eliminar elementos
+    private void EliminarGasto((string Nombre, double Valor) gasto)
+    {
+        Gastos.Remove(gasto);
+    }
+
+    private void EliminarIngreso((string Nombre, double Valor) ingreso)
+    {
+        Ingresos.Remove(ingreso);
+    }
+
+    private void EliminarActivo((string Nombre, double Valor) activo)
+    {
+        Activos.Remove(activo);
+    }
+}
