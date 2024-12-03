@@ -1,9 +1,6 @@
-﻿@page "/Simulacion"
-
-@using System.Globalization
+﻿@page "/simulacion"
 
 <div class="container mt-4">
-
     <div class="container mt-4">
         <!-- Controles superiores -->
         <div class="card p-3 mb-4 shadow-sm">
@@ -37,13 +34,13 @@
                 <div class="col-md-6">
                     <div class="alert alert-info text-center">
                         <h5>Total a Pagar</h5>
-                        <p class="display-6 text-primary">@TotalPagar.ToString("C", CultureInfo.CurrentCulture)</p>
+                        <p class="display-6 text-primary">@TotalPagar.ToString("C")</p>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="alert alert-success text-center">
                         <h5>Pago Mensual</h5>
-                        <p class="display-6 text-success">@PagoMensual.ToString("C", CultureInfo.CurrentCulture)</p>
+                        <p class="display-6 text-success">@PagoMensual.ToString("C")</p>
                     </div>
                 </div>
             </div>
@@ -52,7 +49,14 @@
 
 
     <!-- Gastos de Compras y Compras -->
-    <div class="row">
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <label for="margenBeneficio" class="form-label">Margen de Beneficio (%)</label>
+            <input type="number" class="form-control" id="margenBeneficio" @bind="MargenBeneficio" min="0" max="100" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
         <div class="col-md-6">
             <div class="card mb-3">
                 <div class="card-header bg-warning text-white">Gastos de Compras</div>
@@ -78,7 +82,7 @@
                 }
             </ul>
             <div class="mt-3">
-                <h5>Total de Gastos de Compras: @TotalGastosCompras.ToString("C", CultureInfo.CurrentCulture)</h5>
+                <h5>Total de Gastos de Compras: @TotalGastosCompras.ToString("C")</h5>
             </div>
         </div>
 
@@ -101,28 +105,35 @@
                     <button class="btn btn-success w-100" @onclick="AgregarCompra">Agregar Compra</button>
                 </div>
             </div>
-            <ul class="list-group">
-                @foreach (var compra in Compras)
-                {
-                    var totalCompra = compra.Valor * compra.Cantidad;
-                    var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
-                    var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
-                    var costoIndividual = compra.Cantidad > 0 ? gastoVerdadero / compra.Cantidad : 0;
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        @compra.Nombre: $@compra.Valor.ToString("F2") x @compra.Cantidad = $@totalCompra.ToString("F2") (@porcentajeGasto.ToString("F2")%)
-                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarCompra(compra)">Eliminar</button>
-                    </li>
-                    <li class="list-group-item">
-                        Gasto Verdadero: $@gastoVerdadero.ToString("F2")
-                    </li>
-                    <li class="list-group-item">
-                        Costo Individual: $@costoIndividual.ToString("F2")
-                    </li>
-                }
-            </ul>
+            @foreach (var compra in Compras)
+            {
+                var totalCompra = compra.Valor * compra.Cantidad;
+                var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
+                var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
+                var costoIndividual = compra.Cantidad > 0 ? gastoVerdadero / compra.Cantidad : 0;
+                var precioVenta = costoIndividual * (1 + MargenBeneficio / 100);
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>@compra.Nombre</strong>: $@compra.Valor.ToString("F2") x @compra.Cantidad = $@totalCompra.ToString("F2") (@porcentajeGasto.ToString("F2")%)
+                    <button class="btn btn-danger btn-sm" @onclick="() => EliminarCompra(compra)">Eliminar</button>
+                </li>
+                <li class="list-group-item">
+                    <strong>Gasto Verdadero:</strong> $@gastoVerdadero.ToString("F2")
+                </li>
+                <li class="list-group-item">
+                    <strong>Costo Individual:</strong> $@costoIndividual.ToString("F2")
+                </li>
+                <li class="list-group-item">
+                    <strong>Precio de Venta:</strong> $@precioVenta.ToString("F2")
+                </li>
+            }
+
             <div class="mt-3">
-                <h5>Total Compras: @TotalCompras.ToString("C", CultureInfo.CurrentCulture)</h5>
+                <h5>Total Compras: @TotalCompras.ToString("C")</h5>
+                <h5>Total Ingresos: @TotalIngresos.ToString("C")</h5>
+                <h5>Beneficio de Compra: @BeneficioCompra.ToString("F2")</h5>
             </div>
+
+
         </div>
     </div>
 
@@ -137,10 +148,10 @@
                         <input type="text" class="form-control" id="nombreGasto" @bind="NombreGasto" />
                     </div>
                     <div class="mb-3">
-                        <label for="valorGasto" class="form-label">Monto</label>
+                        <label for="valorGasto" class="form-label">Valor</label>
                         <input type="number" class="form-control" id="valorGasto" @bind="ValorGasto" />
                     </div>
-                    <button class="btn btn-primary w-100" @onclick="AgregarGasto">Agregar Gasto</button>
+                    <button class="btn btn-secondary w-100" @onclick="AgregarGasto">Agregar Gasto</button>
                 </div>
             </div>
             <ul class="list-group">
@@ -153,24 +164,23 @@
                 }
             </ul>
             <div class="mt-3">
-                <h5>Total de Gastos Administración: @TotalGastos.ToString("C", CultureInfo.CurrentCulture)</h5>
+                <h5>Total Gastos: @TotalGastos.ToString("C")</h5>
             </div>
         </div>
 
-        <!-- Activos -->
         <div class="col-md-6">
             <div class="card mb-3">
-                <div class="card-header bg-info text-white">Activos</div>
+                <div class="card-header bg-primary text-white">Activos</div>
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="nombreActivo" class="form-label">Nombre del Activo</label>
                         <input type="text" class="form-control" id="nombreActivo" @bind="NombreActivo" />
                     </div>
                     <div class="mb-3">
-                        <label for="valorActivo" class="form-label">Monto</label>
+                        <label for="valorActivo" class="form-label">Valor</label>
                         <input type="number" class="form-control" id="valorActivo" @bind="ValorActivo" />
                     </div>
-                    <button class="btn btn-info w-100" @onclick="AgregarActivo">Agregar Activo</button>
+                    <button class="btn btn-primary w-100" @onclick="AgregarActivo">Agregar Activo</button>
                 </div>
             </div>
             <ul class="list-group">
@@ -183,29 +193,34 @@
                 }
             </ul>
             <div class="mt-3">
-                <h5>Total de Activos: @TotalActivos.ToString("C", CultureInfo.CurrentCulture)</h5>
-                <h5>Depreciación: @(TotalActivos / 60).ToString("F2")</h5>
+                <h5>Total Activos: @TotalActivos.ToString("C")</h5>
             </div>
-        </div>
-
-        <div class="col-md-4 text-end">
-            <h5>Ganancias: @Ganancias.ToString("C", CultureInfo.CurrentCulture)</h5>
         </div>
     </div>
 </div>
 
-
 @code {
-    // Variables para los cálculos
+        // Variables para los cálculos
     private double TasaInteres { get; set; } = 5;
     private int NumeroMeses { get; set; } = 24;
     private double MontoPrestamo { get; set; } = 100000;
+    private double _margenBeneficio = 10; // Margen de beneficio en porcentaje
+    private double MargenBeneficio
+    {
+        get => _margenBeneficio;
+        set
+        {
+            _margenBeneficio = value;
+            RecalcularTotalIngresos();
+        }
+    }
     private double TotalPagar => MontoPrestamo * Math.Pow(1 + (TasaInteres / 100), NumeroMeses / 12.0);
     private double PagoMensual => TotalPagar / NumeroMeses;
     private double Ganancias => TotalCompras - TotalGastos - TotalGastosCompras;
 
     // Listas de datos
-    private List<(string Nombre, double Valor, int Cantidad)> Compras = new();
+    private List
+    <(string Nombre, double Valor, int Cantidad)> Compras = new();
     private List<(string Nombre, double Valor)> Gastos = new();
     private List<(string Concepto, double Precio)> GastosCompras = new();
     private List<(string Nombre, double Valor)> Activos = new();
@@ -215,6 +230,9 @@
     private double TotalCompras => Compras.Sum(c => c.Valor * c.Cantidad);
     private double TotalGastosCompras => GastosCompras.Sum(gc => gc.Precio);
     private double TotalActivos => Activos.Sum(a => a.Valor);
+    private double TotalIngresos { get; set; }
+    private double BeneficioCompra => TotalIngresos - (TotalCompras + TotalGastosCompras);
+
 
     // Variables temporales para agregar elementos
     private string NombreGasto { get; set; }
@@ -226,6 +244,7 @@
     private double PrecioGastoCompra { get; set; }
     private string NombreActivo { get; set; }
     private double ValorActivo { get; set; }
+
 
     // Métodos para agregar elementos
     private void AgregarGasto()
@@ -246,6 +265,7 @@
             NombreCompra = string.Empty;
             ValorCompra = 0;
             CantidadCompra = 0;
+            RecalcularTotalIngresos();
         }
     }
 
@@ -256,6 +276,7 @@
             GastosCompras.Add((ConceptoGastoCompra, PrecioGastoCompra));
             ConceptoGastoCompra = string.Empty;
             PrecioGastoCompra = 0;
+            RecalcularTotalIngresos();
         }
     }
 
@@ -278,15 +299,32 @@
     private void EliminarCompra((string Nombre, double Valor, int Cantidad) compra)
     {
         Compras.Remove(compra);
+        RecalcularTotalIngresos();
     }
 
     private void EliminarGastoCompra((string Concepto, double Precio) gastoCompra)
     {
         GastosCompras.Remove(gastoCompra);
+        RecalcularTotalIngresos();
     }
 
     private void EliminarActivo((string Nombre, double Valor) activo)
     {
         Activos.Remove(activo);
+    }
+
+    // Método para recalcular el total de ingresos
+    private void RecalcularTotalIngresos()
+    {
+        TotalIngresos = Compras.Sum(c =>
+        {
+            var totalCompra = c.Valor * c.Cantidad;
+            var porcentajeGasto = TotalCompras > 0 ? (totalCompra / TotalCompras) * 100 : 0;
+            var gastoVerdadero = (TotalGastosCompras * (porcentajeGasto / 100)) + totalCompra;
+            var costoIndividual = c.Cantidad > 0 ? gastoVerdadero / c.Cantidad : 0;
+            var precioVenta = costoIndividual * (1 + MargenBeneficio / 100);
+            return precioVenta * c.Cantidad;
+        });
+        StateHasChanged();
     }
 }
