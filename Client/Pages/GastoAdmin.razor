@@ -1,0 +1,95 @@
+﻿@page "/Administracion"
+@using Empresa.Shared.Model
+@inject Empresa.Client.Services.DataService DataService
+
+<h2 class="text-center text-primary">Gasto Administracion</h2>
+
+<div class="container mt-4">
+    @if (gastosAdministrativos == null)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando datos...</p>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0">Gastos Administrativos</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var gasto in gastosAdministrativos)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@gasto.Concepto: <strong>$@gasto.Monto</strong></span>
+                            <button class="btn btn-danger btn-sm" @onclick="() => EliminarGasto(gasto)">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </li>
+                    }
+                </ul>
+                <div class="mt-3">
+                    <h5>Total Gasto Administrativo: <strong>$@TotalGastoAdministrativo</strong></h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="card-title mb-0">Agregar Gasto Administrativo</h4>
+            </div>
+            <div class="card-body">
+                <EditForm Model="nuevoGasto" OnValidSubmit="AgregarGasto">
+                    <div class="mb-3">
+                        <label for="concepto" class="form-label">Concepto:</label>
+                        <InputText id="concepto" class="form-control" @bind-Value="nuevoGasto.Concepto" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="monto" class="form-label">Monto:</label>
+                        <InputNumber id="monto" class="form-control" @bind-Value="nuevoGasto.Monto" />
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-plus-circle"></i> Agregar
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<GastoAdministrativo>? gastosAdministrativos;
+    private GastoAdministrativo nuevoGasto = new GastoAdministrativo();
+
+    protected override void OnInitialized()
+    {
+        gastosAdministrativos = DataService.GastosAdministrativos;
+    }
+
+    private void AgregarGasto()
+    {
+        if (gastosAdministrativos != null)
+        {
+            DataService.AddGastoAdministrativo(new GastoAdministrativo
+                {
+                    Concepto = nuevoGasto.Concepto,
+                    Monto = nuevoGasto.Monto
+                });
+            nuevoGasto = new GastoAdministrativo(); // Resetea el formulario
+        }
+    }
+
+    private void EliminarGasto(GastoAdministrativo gasto)
+    {
+        if (gastosAdministrativos != null)
+        {
+            DataService.RemoveGastoAdministrativo(gasto);
+        }
+    }
+
+    private decimal TotalGastoAdministrativo => gastosAdministrativos?.Sum(g => g.Monto) ?? 0;
+}
